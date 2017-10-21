@@ -4,6 +4,13 @@ const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 
+
+/**
+ * NOTES/LEARNINGS:
+ * 1) Use function method to have access to 'this' model
+ * 2) Return promises for access in server using 'then'
+ */
+
 var UserSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -37,7 +44,7 @@ var UserSchema = new mongoose.Schema({
   ]
 });
 
-// Called automatically by JSON.stringifym
+// Called automatically by JSON.stringify
 UserSchema.methods.toJSON = function () {
   // references user directly
   var user = this;
@@ -80,6 +87,27 @@ UserSchema.statics.findByToken = function (token) {
     'tokens.token': token,
     'tokens.access': 'auth'
   });
+}
+
+// 
+UserSchema.statics.findByCredentials = function (email, password) {
+  var User = this;
+
+  return User.findOne({email}).then(user => {
+    if (!user) {
+      Promise.reject();
+    }
+
+    return new Promise((resolve, reject) => {
+      bcrypt.compare(password, user.password, (err, res) => {
+        if (res) {
+          resolve(user);
+        } else {
+          reject();
+        }
+      });
+    })
+  })
 }
 
 // Run before given event
