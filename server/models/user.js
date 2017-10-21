@@ -82,7 +82,7 @@ UserSchema.statics.findByToken = function (token) {
   });
 }
 
-// Run code before given event
+// Run before given event
 UserSchema.pre('save', function (next) {
   var user = this;
   // checks for modified property
