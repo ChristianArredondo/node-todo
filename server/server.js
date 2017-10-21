@@ -108,15 +108,19 @@ app.post('/users', (req, res) => {
   });
 });
 
-// GET request for authentication and token generation
+// GET request for user using authentication
 app.get('/users/me', authenticate, (req, res) => {
   res.send(req.user);
 });
 
+// POST login and authentication
 app.post('/users/login', (req, res) => {
     var body = _.pick(req.body, ['email', 'password']);
+    // Search for user with login info
     User.findByCredentials(body.email, body.password).then(user => {
+      // return generated token
       return user.generateAuthToken().then(token => {
+        // set token as header response
         res.header('x-auth', token).send(user);
       })
     }).catch(err => {
