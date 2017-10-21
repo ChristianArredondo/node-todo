@@ -19,7 +19,8 @@
     "heroku": "^0.2.0",
     "lodash": "^4.17.4",
     "mongodb": "^2.2.31",
-    "mongoose": "^4.12.1"
+    "mongoose": "^4.12.1",
+    "validator": "^9.0.0"
   },
   "devDependencies": {
     "expect": "^21.2.1",
