@@ -62,7 +62,7 @@ UserSchema.methods.generateAuthToken = function () {
   // access key name
   var access = 'auth';
   // generate token and push to tokens array
-  var token = jwt.sign({_id: user._id.toHexString(), access}, 'abc123ROFL').toString();
+  var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString();
   user.tokens.push({access, token});
   // return token on save
   return user.save().then(() => {
@@ -86,7 +86,7 @@ UserSchema.statics.findByToken = function (token) {
   var decoded;
   // check validation
   try {
-    decoded = jwt.verify(token, 'abc123ROFL');
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
   } catch (e) {
     // equivalent to long-hand promise reject notation
     return Promise.reject();
