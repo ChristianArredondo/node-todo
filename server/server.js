@@ -94,16 +94,30 @@ app.patch('/todos/:id', (req, res) => {
 /** POST and create new user */
 app.post('/users', (req, res) => {
   var body = _.pick(req.body, ['email', 'password']);
-  console.log(body);
   var user = new User(body);
 
   user.save().then(() => {
+    // generate token upom save
     return user.generateAuthToken();
   }).then(token => {
+    // retrieve generated token and send as Header
     res.header('x-auth', token).send(user)
   }).catch(err => {
     res.status(400).send(err);
   });
+});
+
+app.get('/users/me', (req, res) => {
+  var token = req.header('x-auth');
+
+  User.findByToken(token).then(user => {
+    if (!user) {
+      return Promise.reject();
+    }
+    res.send(user);
+  }).catch(e => {
+    res.status(401).send();
+  })
 });
 
 app.listen(port, () => {
